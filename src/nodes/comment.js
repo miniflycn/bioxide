@@ -1,3 +1,3 @@
 export default (fragment, node) => {
-    console.log(node)
+    // console.log(node)
 }

@@ -44,7 +44,7 @@ describe('bioxide template', () => {
             .toHaveAttribute('data-abc')
     })
 
-    it('design/if', () => {
+    it('design/if.tpl', () => {
         const Fn = build('if')
         render(createElement(Fn, {
             type: 'a'
@@ -60,5 +60,10 @@ describe('bioxide template', () => {
         expect(screen.getByText(/hello world/))
             .toBeInTheDocument()
 
+    })
+
+    it('design/graph.tpl', () => {
+        const Fn = build('graph')
+        render(createElement(Fn))
     })
 })
