@@ -1,0 +1,14 @@
+{
+  "name": "bioxide",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "bioxide",
+  "main": "index.js",
+  "author": "Daniel Yang",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "astring": "^1.8.3",
+    "svelte": "^3.49.0"
+  }
+}
