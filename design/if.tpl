@@ -1,19 +1,5 @@
-<script>
-    function reducer(state, action) {
-        return state
-    }
-    export default {
-        defaultState: {},
-        initState: new Promise((resolve) => { resolve({}) }),
-        reducer,
-    }
-</script>
-
-{#if props.obj.type !== 'hello'}
-    <p>hello {props.obj.msg}</p>
-    <p>{state.msg}</p>
-    <p>{state.obj.msg}</p>
-    <p>{state.obj.type}</p>
+{#if props.type !== 'a'}
+    <p>hello {props.msg}</p>
 {/if}
 
 {#if props.type == 'a'}
