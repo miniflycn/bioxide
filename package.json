@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "type": "module",
   "description": "bioxide",
+  "scripts": {
+    "test": "./test.sh"
+  },
   "main": "index.js",
   "author": "Daniel Yang",
   "license": "MIT",
@@ -10,5 +13,16 @@
   "dependencies": {
     "astring": "^1.8.3",
     "svelte": "^3.49.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "@babel/preset-react": "^7.18.6",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

@@ -6,6 +6,7 @@ import EachBlock from './each-block.js'
 import Element from './element.js'
 import Text from './text.js'
 import MustacheTag from './mustache-tag.js'
+import Comment from './comment.js'
 import { walk } from 'svelte/compiler'
 
 const BLANK = /^\s+$/
@@ -15,6 +16,7 @@ const nodeMap = {
     Element,
     Text,
     MustacheTag,
+    Comment,
 }
 
 function walkTpl(node, fn) {
@@ -48,6 +50,13 @@ export default class Fragment {
         this.count = count()
         this.values = ['props']
         this.graph = new Graph
+
+        if (!component.ast.instance) return
+
+        // useReducer has dispatch function
+        if (component.options.reducer) {
+
+        }
     }
 
     expression(node) {

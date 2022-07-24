@@ -9,8 +9,8 @@ export default class Component {
         this.ast = ast
         this.name = name
         this.options = null
-        this.fragment = new Fragment(this, ast.html, code)
         this.walk_js()
+        this.fragment = new Fragment(this, ast.html, code)
     }
 
     walk_js() {
@@ -50,40 +50,52 @@ export default class Component {
 
     generate() {
         this.fragment.generate()
-        const { defaultState, initState, reducer } = this.options
         const code = new Code
-        if (reducer) {
-            code.addLine(`import { useReducer } from 'react'`)
-        } else {
-            code.addLine(`import { useState } from 'react'`)
-        }
-        code.addBlock(`${generate(this.ast.instance.content)}`)
-        code.addBlock(this.fragment.codes[0].toString())
-        code.addLine('export default (props) => {')
-        code.indent++
-        if (defaultState) {
-            // useReducer
+        code.addLine(`import React from 'react'`)
+
+        if (this.ast.instance) {
+            const { defaultState, initState, reducer } = this.options
             if (reducer) {
-                code.addBlock(
-                    `const [state, dispatch] = useReducer(${generate(reducer)}, ${generate(defaultState)})`
-                )
-            // useState
+                code.addLine(`import { useReducer } from 'react'`)
             } else {
-                code.addBlock(
-                    `const [state, setState] = useState(${generate(defaultState)})`
-                )
+                code.addLine(`import { useState } from 'react'`)
+            }
+            code.addBlock(`${generate(this.ast.instance.content)}`)
+            code.addBlock(this.fragment.codes[0].toString())
+            code.addLine('export default (props) => {')
+            code.indent++
+            if (defaultState) {
+                // useReducer
+                if (reducer) {
+                    code.addBlock(
+                        `const [state, dispatch] = useReducer(${generate(reducer)}, ${generate(defaultState)})`
+                    )
+                // useState
+                } else {
+                    code.addBlock(
+                        `const [state, setState] = useState(${generate(defaultState)})`
+                    )
+                }
+            } else {
+                // useReducer
+                if (reducer) {
+                    code.addBlock(
+                        `const [state, dispatch] = useReducer(${generate(reducer)}, ${this.fragment.graph.build('state')})`
+                    )
+                // useState
+                } else {
+                    code.addBlock(
+                        `const [state, setState] = useState(${this.fragment.graph.build('state')})`
+                    )
+                }
             }
         } else {
-            // useReducer
-            if (reducer) {
-                code.addBlock(
-                    `const [state, dispatch] = useReducer(${generate(reducer)}, ${this.fragment.graph.build('state')})`
-                )
-            // useState
-            } else {
-                code.addBlock(
-                    `const [state, setState] = useState(${this.fragment.graph.build('state')})`
-                )
+            const stateGraph = this.fragment.graph.build('state')
+            code.addBlock(this.fragment.codes[0].toString())
+            code.addLine('export default (props) => {')
+            code.indent++
+            if (stateGraph !== '{\n}') {
+                code.addBlock(`console.warn(\`component state is undefined, but template use it\`, 'state graph === ', ${stateGraph})`)
             }
         }
 
@@ -91,6 +103,6 @@ export default class Component {
         code.indent--
         code.addLine('}')
         
-        console.log(code.toString())
+        return code.toString()
     }
 }
