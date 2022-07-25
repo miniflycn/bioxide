@@ -17,26 +17,31 @@ export default function attributes(fragment, attributes) {
             fragment.addCode(`${attribute.name}=`)
         }
         if (attribute.type === 'Attribute') {
+
             const typeFlag = attribute.value.length > 1 ?
                 'mustacheTag' : attribute.value[0].type === 'Text' ?
                 'template' : 'mustacheTag'
 
             typeFlag === 'template' ? 
-                fragment.addCode('"') : fragment.addCode('{`')
+                fragment.addCode('"') : fragment.addCode('{')
             const values = []
             attribute.value.forEach(v => {
                 if (v.type === 'Text') {
-                    values.push(`${v.data}`)
+                    typeFlag === 'template' ? 
+                        values.push(`${v.data}`) :
+                        values.push(`"${v.data}"`)
                 } else if (v.type === 'MustacheTag') {
                     const expression = fragment.expression(v.expression)
-                    values.push(`\$\{${expression.string}\}`)
+                    values.push(`${expression.string}`)
                 } else {
                     throw new Error(`${v.type} is not supported`)
                 }
             })
-            fragment.addCode(values.join(''))
+            attribute.value.length > 1 ?
+                fragment.addCode(`[${values.join(', ')}].join('')`) :
+                fragment.addCode(`${values[0]}`)
             typeFlag === 'template' ? 
-                fragment.addCode('"') : fragment.addCode('`}')
+                fragment.addCode('"') : fragment.addCode('}')
         } else {
             throw new Error(`${attribute.type} is not supported`)
         }

@@ -36,6 +36,6 @@ export default (fragment, node) => {
     createIfBlock(fragment, node)
     fragment.indent(-1)
     fragment.addLine(`}`)
-    fragment.LastCurrent()
+    fragment.lastCurrent()
     fragment.addLine(`{ ${ifblock}({${values.join(', ')}}) }`)
 }

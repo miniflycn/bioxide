@@ -53,6 +53,7 @@ export default class Fragment {
         this.values = ['props']
         this.depCom = []
         this.graph = new Graph
+        this.options = component.options
 
         if (!component.ast.instance) return
         this.values.push('state', 'setState')
@@ -103,7 +104,7 @@ export default class Fragment {
         }
     }
 
-    LastCurrent() {
+    lastCurrent() {
         this.current = this.stack.pop()
     }
 

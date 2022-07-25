@@ -7,8 +7,17 @@ import complie from '../src/index.js'
 import { transformSync } from "@babel/core";
 import { readFileSync } from 'fs'
 
+let El = build('el')
+
 function build(name, debug) {
-    const ncode = complie(readFileSync(`./design/${name}.tpl`, 'utf-8'), { test: true })
+    const ncode = complie(
+        readFileSync(`./design/${name}.tpl`, 'utf-8'), 
+        { 
+            test: true, 
+            resolve: (name) => {
+                return `./${name.slice(3)}.tpl`
+            },
+        })
     const { code } = transformSync(ncode, {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-transform-modules-commonjs"]
@@ -21,6 +30,7 @@ function build(name, debug) {
         if (name === 'react') return React
         if (name === 'react-dom/test-utils') return { act }
         if (name === 'antd') return { Button }
+        if (name === './el.tpl') return El
         throw new Error(`Cannot load ${name}`)
     }
     ;(new Function('module', 'exports', 'require', code))(mod, mod.exports, req)
@@ -88,5 +98,28 @@ describe('bioxide template', () => {
     it('design/component.tpl', () => {
         const Fn = build('component')
         render(createElement(Fn))
+
+        expect(screen.getByText('hello world'))
+            .toBeInTheDocument()
+        expect(screen.getByText('hello world').parentElement)
+            .toHaveClass('ant-btn')
+    })
+
+    it('design/child-component.tpl', () => {
+        const Fn = build('child-component')
+        render(createElement(Fn))
+
+        expect(screen.getByText(/a/))
+            .toHaveClass('my-p')
+        expect(screen.getByText(/b/))
+            .toHaveClass('test')
+        expect(screen.getByText(/c/))
+            .toHaveClass('test')
+        expect(screen.getByText(/c/))
+            .toHaveAttribute('a')
+        expect(screen.getByText(/d/))
+            .toHaveClass('test')
+        expect(screen.getByText(/e/))
+            .toHaveAttribute('data-abc')
     })
 })

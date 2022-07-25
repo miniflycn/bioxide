@@ -107,7 +107,7 @@ export default class Component {
                     code.indent++
                     test ? 
                         code.addBlock(`act(() => {(${generate(initState)})().then(v => setState(v))})`)
-                        : code.addBlock(`;(${generate(initState)})().then(v => setState(v))`)
+                        : code.addBlock(`;(${generate(initState)})().then(v => {setState(v)})`)
                     code.indent--
                     code.addLine(`}, [])`)
                 }

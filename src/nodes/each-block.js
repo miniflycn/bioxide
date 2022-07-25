@@ -26,6 +26,6 @@ export default (fragment, node) => {
     fragment.addLine(`})`)
     fragment.indent(-1)
     fragment.addLine(`}`)
-    fragment.LastCurrent()
+    fragment.lastCurrent()
     fragment.addLine(`{ ${eachblock}(${values.join(', ')}) }`)
 }
