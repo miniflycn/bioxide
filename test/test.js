@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom'
 import React, { createElement } from 'react'
-import ReactDOM from 'react-dom'
 import {render, fireEvent, screen} from '@testing-library/react'
 import { act } from 'react-dom/test-utils';
+import { Button } from 'antd'
 import complie from '../src/index.js'
 import { transformSync } from "@babel/core";
 import { readFileSync } from 'fs'
@@ -20,6 +20,7 @@ function build(name, debug) {
     const req = function (name) {
         if (name === 'react') return React
         if (name === 'react-dom/test-utils') return { act }
+        if (name === 'antd') return { Button }
         throw new Error(`Cannot load ${name}`)
     }
     ;(new Function('module', 'exports', 'require', code))(mod, mod.exports, req)
@@ -71,9 +72,9 @@ describe('bioxide template', () => {
         render(createElement(Fn))
     })
 
-    it('design/initState.tpl', (/*done*/) => {
+    it('design/initState.tpl', (done) => {
         const Fn = build('initState')
-        const res = render(createElement(Fn))
+        render(createElement(Fn))
 
         expect(screen.getByText('i am not loading'))
             .toBeInTheDocument()
@@ -81,6 +82,11 @@ describe('bioxide template', () => {
             expect(screen.getByText('i am loading'))
                 .toBeInTheDocument()
             done()
-        }, 20)
+        }, 100)
+    })
+
+    it('design/component.tpl', () => {
+        const Fn = build('component')
+        render(createElement(Fn))
     })
 })

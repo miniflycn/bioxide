@@ -51,7 +51,7 @@ export default class Component {
 
     generate() {
         this.fragment.generate()
-        const { c } = this.options
+        const { test } = this.options
         const code = new Code
         code.addLine(`import React from 'react'`)
 

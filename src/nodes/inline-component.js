@@ -1,6 +1,9 @@
 import attributes from "../utils/attributes.js"
 
 export default (fragment, node) => {
+    // if node.name start with capital letter
+    // the node is a component
+    fragment.addDepCom(node.name)
     if (node.children.length === 0) {
         fragment.addLine(`<${node.name} `)
         attributes(fragment, node.attributes)

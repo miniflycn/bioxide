@@ -7,6 +7,7 @@ import Element from './element.js'
 import Text from './text.js'
 import MustacheTag from './mustache-tag.js'
 import Comment from './comment.js'
+import InlineComponent from './inline-component.js'
 import { walk } from 'svelte/compiler'
 
 const BLANK = /^\s+$/
@@ -17,6 +18,7 @@ const nodeMap = {
     Text,
     MustacheTag,
     Comment,
+    InlineComponent
 }
 
 function walkTpl(node, fn) {
@@ -49,6 +51,7 @@ export default class Fragment {
         this.current = this.codes[1]
         this.count = count()
         this.values = ['props']
+        this.depCom = []
         this.graph = new Graph
 
         if (!component.ast.instance) return
@@ -57,6 +60,12 @@ export default class Fragment {
         // useReducer has dispatch function
         if (component.jsOptions.reducer) {
 
+        }
+    }
+
+    addDepCom(name) {
+        if (this.depCom.indexOf(name) < 0) {
+            this.depCom.push(name)
         }
     }
 
