@@ -11,14 +11,11 @@ function bioxidePlugin() {
       name: 'transform-bioxide',
       transform(src, id) {
         if (/\.tpl$/.test(id)) {
-          const { code, map } = babel.transformSync(
+          const res = babel.transformSync(
             complier(src, { resolve: (name) => { return `./${name.slice(3)}.tpl` }}),
-            { presets: ["@babel/preset-react"], }
+            { presets: ["@babel/preset-react"], sourceMaps: true }
           )
-          return {
-            code,
-            map
-          }
+          return res
         }
       }
     }

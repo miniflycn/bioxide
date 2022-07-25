@@ -10,4 +10,4 @@
     }
 </script>
 
-<p onClick={() => setState({ msg: 'lalala' })}>{state.msg}</p>
+<p onClick={() => setStatexxx({ msg: 'lalala' })}>{state.msg}</p>
