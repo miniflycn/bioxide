@@ -52,9 +52,10 @@ export default class Fragment {
         this.graph = new Graph
 
         if (!component.ast.instance) return
+        this.values.push('state', 'setState')
 
         // useReducer has dispatch function
-        if (component.options.reducer) {
+        if (component.jsOptions.reducer) {
 
         }
     }
@@ -153,6 +154,5 @@ export default class Fragment {
     generate() {
         this.returnWrapper(this.ast)
         this.graph.build()
-        console.log(this.graph.build('state'), this.graph.build('props'))
     }
 }

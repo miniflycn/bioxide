@@ -3,7 +3,7 @@ import Component from './component.js'
 
 export default (code, options) => {
     const ast = parse(code)
-    const component = new Component(code, ast, {})
+    const component = new Component(code, ast, options)
     return component.generate()
     // console.log(ast)
 }

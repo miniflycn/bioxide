@@ -2,20 +2,24 @@ import '@testing-library/jest-dom'
 import React, { createElement } from 'react'
 import ReactDOM from 'react-dom'
 import {render, fireEvent, screen} from '@testing-library/react'
+import { act } from 'react-dom/test-utils';
 import complie from '../src/index.js'
 import { transformSync } from "@babel/core";
 import { readFileSync } from 'fs'
 
-function build(name) {
-    const ncode = complie(readFileSync(`./design/${name}.tpl`, 'utf-8'))
+function build(name, debug) {
+    const ncode = complie(readFileSync(`./design/${name}.tpl`, 'utf-8'), { test: true })
     const { code } = transformSync(ncode, {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-transform-modules-commonjs"]
     })
 
+    debug && console.log('ncdoe === ', ncode, 'code === ', code)
+
     const mod = { exports: {} }
     const req = function (name) {
         if (name === 'react') return React
+        if (name === 'react-dom/test-utils') return { act }
         throw new Error(`Cannot load ${name}`)
     }
     ;(new Function('module', 'exports', 'require', code))(mod, mod.exports, req)
@@ -65,5 +69,18 @@ describe('bioxide template', () => {
     it('design/graph.tpl', () => {
         const Fn = build('graph')
         render(createElement(Fn))
+    })
+
+    it('design/initState.tpl', (/*done*/) => {
+        const Fn = build('initState')
+        const res = render(createElement(Fn))
+
+        expect(screen.getByText('i am not loading'))
+            .toBeInTheDocument()
+        setTimeout(() => {
+            expect(screen.getByText('i am loading'))
+                .toBeInTheDocument()
+            done()
+        }, 20)
     })
 })

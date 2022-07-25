@@ -3,12 +3,13 @@ import { walk } from 'svelte/compiler'
 import { generate } from 'astring'
 import Code from './nodes/code.js'
 
+
 export default class Component {
-    constructor(code, ast, name) {
+    constructor(code, ast, options) {
         this.code = code
         this.ast = ast
-        this.name = name
-        this.options = null
+        this.options = options
+        this.jsOptions = null
         this.walk_js()
         this.fragment = new Fragment(this, ast.html, code)
     }
@@ -16,7 +17,7 @@ export default class Component {
     walk_js() {
         const script = this.ast.instance
         if (!script) return
-        const options = {}
+        const jsOptions = {}
         let exportDefault
         walk(script, {
             enter(node, parent) {
@@ -36,7 +37,7 @@ export default class Component {
                         case 'defaultState':
                         case 'initState':
                         case 'reducer':
-                            options[node.key.name] = node.value
+                            jsOptions[node.key.name] = node.value
                             break
                     }                    
                     this.skip()
@@ -45,16 +46,21 @@ export default class Component {
         })
 
         // set options
-        this.options = options
+        this.jsOptions = jsOptions
     }
 
     generate() {
         this.fragment.generate()
+        const { c } = this.options
         const code = new Code
         code.addLine(`import React from 'react'`)
 
         if (this.ast.instance) {
-            const { defaultState, initState, reducer } = this.options
+            const { defaultState, initState, reducer } = this.jsOptions
+            // 测试处理
+            if (test) {
+                code.addLine(`import { act } from 'react-dom/test-utils'`)
+            }
             if (reducer) {
                 code.addLine(`import { useReducer${initState ? ', useLayoutEffect': ''} } from 'react'`)
             } else {
@@ -99,7 +105,9 @@ export default class Component {
                 } else {
                     code.addLine(`useLayoutEffect(() => {`)
                     code.indent++
-                    code.addBlock(`;(${generate(initState)})().then(v => setState(v))`)
+                    test ? 
+                        code.addBlock(`act(() => {(${generate(initState)})().then(v => setState(v))})`)
+                        : code.addBlock(`;(${generate(initState)})().then(v => setState(v))`)
                     code.indent--
                     code.addLine(`}, [])`)
                 }

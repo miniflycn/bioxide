@@ -1,11 +1,4 @@
 <script>
-    fucntion reducer(state, action) {
-        switch (action.type) {
-            case 'GET'
-                return {}
-        }
-    }
-
     export default {
         initState: function (props) {
             return new Promise((resolve, reject) => {
@@ -13,10 +6,9 @@
                     resolve({
                         loading: true
                     })
-                }, 100)
+                }, 10)
             })
-        },
-        reducer: reducer
+        }
     }
 </script>
 

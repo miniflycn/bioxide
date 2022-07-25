@@ -2,7 +2,9 @@
     export default {
         // defaultState is not exist
         // initState nothing todo
-        initState: new Promise()
+        initState: () => {
+            return new Promise(() => {})
+        }
     }
 </script>
 
