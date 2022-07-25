@@ -56,9 +56,9 @@ export default class Component {
         if (this.ast.instance) {
             const { defaultState, initState, reducer } = this.options
             if (reducer) {
-                code.addLine(`import { useReducer } from 'react'`)
+                code.addLine(`import { useReducer${initState ? ', useLayoutEffect': ''} } from 'react'`)
             } else {
-                code.addLine(`import { useState } from 'react'`)
+                code.addLine(`import { useState${initState ? ', useLayoutEffect': ''} } from 'react'`)
             }
             code.addBlock(`${generate(this.ast.instance.content)}`)
             code.addBlock(this.fragment.codes[0].toString())
@@ -89,6 +89,22 @@ export default class Component {
                     )
                 }
             }
+
+            if (initState) {
+                // useReducer
+                if (reducer) {
+                // TODO
+
+                // useState
+                } else {
+                    code.addLine(`useLayoutEffect(() => {`)
+                    code.indent++
+                    code.addBlock(`;(${generate(initState)})().then(v => setState(v))`)
+                    code.indent--
+                    code.addLine(`}, [])`)
+                }
+            }
+
         } else {
             const stateGraph = this.fragment.graph.build('state')
             code.addBlock(this.fragment.codes[0].toString())

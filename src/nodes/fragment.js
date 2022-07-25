@@ -153,5 +153,6 @@ export default class Fragment {
     generate() {
         this.returnWrapper(this.ast)
         this.graph.build()
+        console.log(this.graph.build('state'), this.graph.build('props'))
     }
 }
