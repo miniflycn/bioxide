@@ -51,68 +51,48 @@ export default class Component {
 
     generate() {
         this.fragment.generate()
-        const { test } = this.options
         const code = new Code
-        code.addLine(`import React from 'react'`)
 
+        // class build
         if (this.ast.instance) {
             const { defaultState, initState, reducer } = this.jsOptions
-            // 测试处理
-            if (test) {
-                code.addLine(`import { act } from 'react-dom/test-utils'`)
-            }
-            if (reducer) {
-                code.addLine(`import { useReducer${initState ? ', useLayoutEffect': ''} } from 'react'`)
-            } else {
-                code.addLine(`import { useState${initState ? ', useLayoutEffect': ''} } from 'react'`)
-            }
+            code.addLine(`import React from 'react'`)
             code.addBlock(`${generate(this.ast.instance.content)}`)
             code.addBlock(this.fragment.codes[0].toString())
-            code.addLine('export default (props) => {')
+            if (reducer) {
+                // TODO: add reducer helper
+            }
+
+            code.addLine(`export default class Component extends React.Component {`)
             code.indent++
+            code.addLine(`constructor(props) {`)
+            code.indent++
+            code.addLine(`super(props)`)
             if (defaultState) {
-                // useReducer
-                if (reducer) {
-                    code.addBlock(
-                        `const [state, dispatch] = useReducer(${generate(reducer)}, ${generate(defaultState)})`
-                    )
-                // useState
-                } else {
-                    code.addBlock(
-                        `const [state, setState] = useState(${generate(defaultState)})`
-                    )
-                }
+                code.addBlock(`this.state = ${generate(defaultState)}`)
             } else {
-                // useReducer
-                if (reducer) {
-                    code.addBlock(
-                        `const [state, dispatch] = useReducer(${generate(reducer)}, ${this.fragment.graph.build('state')})`
-                    )
-                // useState
-                } else {
-                    code.addBlock(
-                        `const [state, setState] = useState(${this.fragment.graph.build('state')})`
-                    )
-                }
+                code.addBlock(`this.state = ${this.fragment.graph.build('state')}`)
             }
-
+            code.addLine(`this.props = props`)
+            code.indent--
+            code.addLine(`}`)
             if (initState) {
-                // useReducer
-                if (reducer) {
-                // TODO
-
-                // useState
-                } else {
-                    code.addLine(`useLayoutEffect(() => {`)
-                    code.indent++
-                    test ? 
-                        code.addBlock(`act(() => {(${generate(initState)})().then(v => setState(v))})`)
-                        : code.addBlock(`;(${generate(initState)})().then(v => {setState(v)})`)
-                    code.indent--
-                    code.addLine(`}, [])`)
-                }
+                code.addLine(`componentWillMount() {`)
+                code.indent++
+                code.addBlock(`;(${generate(initState)})().then(v => {this.setState(v)})`)
+                code.indent--
+                code.addLine(`}`)
             }
-
+            code.addLine(`render() {`)
+            code.indent++
+            code.addLine(`const state = this.state`)
+            code.addLine(`const props = this.props`)
+            code.addLine(`const setState = this.setState.bind(this)`)
+            code.addBlock(`${this.fragment.codes[1].toString(1)}`)
+            code.indent--
+            code.addLine(`}`)
+            code.indent--
+            code.addLine(`}`)
         } else {
             const stateGraph = this.fragment.graph.build('state')
             code.addBlock(this.fragment.codes[0].toString())
@@ -121,11 +101,10 @@ export default class Component {
             if (stateGraph !== '{\n}') {
                 code.addBlock(`console.warn(\`component state is undefined, but template use it\`, 'state graph === ', ${stateGraph})`)
             }
-        }
-
-        code.addBlock(`${this.fragment.codes[1].toString(1)}`)
-        code.indent--
-        code.addLine('}')
+            code.addBlock(`${this.fragment.codes[1].toString(1)}`)
+            code.indent--
+            code.addLine('}')
+        }        
         
         return code.toString()
     }

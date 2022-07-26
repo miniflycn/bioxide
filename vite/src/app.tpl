@@ -4,13 +4,19 @@
 
     function handleClick({state, setState, count}){
         setState({
-            ...state,
             count: state.count + count
+        }, () => {
+            console.log('hello world')
         });
     }
 
     export default {
         defaultState: { count: 0 },
+        initState: () => {
+            return new Promise((resolve) => {
+                setTimeout(() => resolve({ count: 1000 }), 1000)
+            })
+        }
     }
 </script>
 
