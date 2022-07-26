@@ -45,8 +45,10 @@ export default class Component {
             }
         })
 
-        // set options
-        this.jsOptions = jsOptions
+        if (exportDefault) {
+            // set options
+            this.jsOptions = jsOptions
+        }
     }
 
     generate() {
