@@ -15,7 +15,7 @@ function build(name, debug) {
         { 
             test: true, 
             resolve: (name) => {
-                return `./${name.slice(3)}.tpl`
+                return `./${name.slice(4)}.tpl`
             },
         })
     const { code } = transformSync(ncode, {

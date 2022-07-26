@@ -55,10 +55,10 @@ export default class Component {
         this.fragment.generate()
         const code = new Code
 
+        code.addLine(`import React from 'react'`)
         // class build
         if (this.jsOptions) {
             const { defaultState, initState, reducer } = this.jsOptions
-            code.addLine(`import React from 'react'`)
             code.addBlock(`${generate(this.ast.instance.content)}`)
             code.addBlock(this.fragment.codes[0].toString())
             if (reducer) {
@@ -76,15 +76,11 @@ export default class Component {
                 code.addBlock(`this.state = ${this.fragment.graph.build('state')}`)
             }
             code.addLine(`this.props = props`)
+            if (initState) {
+                code.addBlock(`;(${generate(initState)})().then(v => {this.setState(v)})`)
+            }
             code.indent--
             code.addLine(`}`)
-            if (initState) {
-                code.addLine(`componentWillMount() {`)
-                code.indent++
-                code.addBlock(`;(${generate(initState)})().then(v => {this.setState(v)})`)
-                code.indent--
-                code.addLine(`}`)
-            }
             code.addLine(`render() {`)
             code.indent++
             code.addLine(`const { state, props } = this`)

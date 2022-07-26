@@ -1,1 +1,1 @@
-<In:el className="test" a={1} b={2}></In:el>
+<Tpl:el className="test" a={1} b={2}></Tpl:el>

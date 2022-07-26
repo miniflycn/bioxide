@@ -60,7 +60,7 @@ export default class Fragment {
         this.values.push('state', 'setState')
 
         // useReducer has dispatch function
-        if (component.jsOptions.reducer) {
+        if (component.jsOptions && component.jsOptions.reducer) {
 
         }
     }
