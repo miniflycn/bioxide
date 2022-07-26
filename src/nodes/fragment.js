@@ -46,7 +46,7 @@ export default class Fragment {
         this.ast = ast
         this.code = code
         // define, main
-        this.codes = [new Code, new Code]
+        this.codes = [[new Code], new Code]
         this.stack = []
         this.current = this.codes[1]
         this.count = count()
@@ -141,13 +141,16 @@ export default class Fragment {
         }
     }
 
-    setCurrent(current) {
-        if (current instanceof Code) {
-            this.stack.push(this.current)
-            this.current = current
+    setCurrent(isFirst) {
+        this.stack.push(this.current)
+        let current
+        if (isFirst) {
+            current = this.codes[0][0]
         } else {
-            throw new Error(`${current} is not a Code instance`)
+            current = new Code
+            this.codes[0].push(current)
         }
+        this.current = current
     }
 
     lastCurrent() {

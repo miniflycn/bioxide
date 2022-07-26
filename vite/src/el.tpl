@@ -1,7 +1,14 @@
 <script>
     export default {
-        defaultState: { msg: 'the count is' }
+        defaultState: { count: 0 }
+        register: {
+            change: (payload, { state, setState }) => {
+                if (payload.count) {
+                    setState({ count: state.count + payload.count })
+                }
+            } 
+        }
     }
 </script>
 
-<p>{state.msg}: {props.count}</p>
+<p>{props.msg}: {state.count}</p>

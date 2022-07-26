@@ -4,7 +4,8 @@ export default (fragment, node) => {
     let name = undefined
     if (node.name.indexOf('Tpl:') === 0) {
         name = `In${node.name.slice(4)}`
-        fragment.setCurrent(fragment.codes[0])
+        // use First
+        fragment.setCurrent(true)
         if (!fragment.options.resolve) {
             throw new Error(`options.resolve is not defined in complite(code, options)`)
         }

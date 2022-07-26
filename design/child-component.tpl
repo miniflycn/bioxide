@@ -1,1 +1,1 @@
-<Tpl:el className="test" a={1} b={2}></Tpl:el>
+<Tpl:el @register="abc" className="test" a={1} b={2}></Tpl:el>

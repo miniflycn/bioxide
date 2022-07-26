@@ -30,7 +30,7 @@ function createIfBlock(fragment, node) {
 export default (fragment, node) => {
     const ifblock = fragment.count(node.else ? 'if_elseblock' : 'ifblock')
     const values = fragment.values
-    fragment.setCurrent(fragment.codes[0])
+    fragment.setCurrent()
     fragment.addLine(`function ${ifblock}({${values.join(', ')}}) {`)
     fragment.indent(1)
     createIfBlock(fragment, node)

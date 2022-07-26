@@ -60,7 +60,7 @@ export default class Component {
         if (this.jsOptions) {
             const { defaultState, initState, reducer } = this.jsOptions
             code.addBlock(`${generate(this.ast.instance.content)}`)
-            code.addBlock(this.fragment.codes[0].toString())
+            code.addBlock(this.fragment.codes[0].map(code => code.toString()).join('\n'))
             if (reducer) {
                 // TODO: add reducer helper
             }
@@ -76,11 +76,15 @@ export default class Component {
                 code.addBlock(`this.state = ${this.fragment.graph.build('state')}`)
             }
             code.addLine(`this.props = props`)
-            if (initState) {
-                code.addBlock(`;(${generate(initState)})().then(v => {this.setState(v)})`)
-            }
             code.indent--
             code.addLine(`}`)
+            if (initState) {
+                code.addLine(`componentDidMount() {`)
+                code.indent++
+                code.addBlock(`(${generate(initState)})(this.props).then(v => {this.setState(v)})`)
+                code.indent--
+                code.addLine(`}`)
+            }
             code.addLine(`render() {`)
             code.indent++
             code.addLine(`const { state, props } = this`)

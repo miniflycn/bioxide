@@ -2,7 +2,7 @@ export default (fragment, node) => {
     const expression = fragment.expression(node.expression)
     const values = fragment.values
     const eachblock = fragment.count('eachblock')
-    fragment.setCurrent(fragment.codes[0])
+    fragment.setCurrent()
     fragment.addLine(`function ${eachblock}(${values.join(', ')}) {`)
     fragment.indent(1)
     const context = node.context.name

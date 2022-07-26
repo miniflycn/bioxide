@@ -15,7 +15,7 @@ function bioxidePlugin() {
             complier(src, { resolve: (name) => { return `./${name.slice(4)}.tpl` }}),
             { presets: ["@babel/preset-react"], sourceMaps: true }
           )
-          return res
+          return { code: res.code }
         }
       }
     }

@@ -13,10 +13,17 @@ export default function attributes(fragment, attributes) {
 
         if (attributeMap[attribute.name]) {
             fragment.addCode(`${attributeMap[attribute.name]}=`)
+        } else if (attribute.name.indexOf('bioxide:') > -1) {
+            console.log(attribute)
+            const register = attribute.name.indexOf('bioxide:r') > -1
         } else {
             fragment.addCode(`${attribute.name}=`)
         }
         if (attribute.type === 'Attribute') {
+            if (attribute.name.indexOf('bioxide:') > -1) {
+                // TODO
+                return
+            }
 
             const typeFlag = attribute.value.length > 1 ?
                 'mustacheTag' : attribute.value[0].type === 'Text' ?
@@ -41,7 +48,7 @@ export default function attributes(fragment, attributes) {
                 fragment.addCode(`[${values.join(', ')}].join('')`) :
                 fragment.addCode(`${values[0]}`)
             typeFlag === 'template' ? 
-                fragment.addCode('"') : fragment.addCode('}')
+                fragment.addCode('" ') : fragment.addCode('} ')
         } else {
             throw new Error(`${attribute.type} is not supported`)
         }
