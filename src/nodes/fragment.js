@@ -54,6 +54,7 @@ export default class Fragment {
         this.depCom = []
         this.graph = new Graph
         this.options = component.options
+        this.js = component.ast.instance
 
         if (!component.ast.instance) return
         this.values.push('state', 'setState')
@@ -78,9 +79,24 @@ export default class Fragment {
                     node.type === 'ObjectExpression' || 
                     node.type === 'Property' ||
                     node.type === 'BinaryExpression' ||
-                    node.type === 'Literal'
+                    node.type === 'Literal' ||
+                    node.type === 'ArrowFunctionExpression' ||
+                    node.type === 'BlockStatement' ||
+                    node.type === 'ReturnStatement' ||
+                    node.type === 'ExpressionStatement' ||
+                    (node.type === 'CallExpression' && node.callee.type !== 'Identifier')
                 ) {
                     // ignore
+                } else if (node.type === 'CallExpression') {
+                    switch (node.callee.name) {
+                        case 'dispatch':
+                        case 'setState':
+                            // No need to find
+                            return this.skip()
+                            break
+                    }
+                    // find call expression
+                    fragment.findCallExpression(node)
                 } else {
                     const flat = flattenReference(node)
                     if (!flat) console.log(node)
@@ -92,6 +108,36 @@ export default class Fragment {
 
         return {
             string: this.code.slice(node.start, node.end)
+        }
+    }
+
+    findCallExpression(node) {
+        // TODO: must find the callee depencies
+        let name
+        node.arguments.forEach(arg => {
+            walk(arg, {
+                enter(argIDentifier) {
+                    if (argIDentifier.type === 'Identifier') {
+                        const argName = argIDentifier.name
+                        if (argName === 'state' || argName === 'props') {
+                            name = node.callee.name
+                        }
+                    }
+                }
+            })
+        })
+        if (this.js) {
+            const fragment = this
+            // console.log(this.js.content)
+            walk(this.js.content, {
+                enter(node, parent) {
+                    if (node.type === 'Identifier' && node.name === name) {
+                        if (parent.type === 'FunctionDeclaration') {
+                            fragment.expression(parent.body)
+                        }
+                    }
+                }
+            })
         }
     }
 

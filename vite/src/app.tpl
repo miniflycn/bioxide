@@ -1,13 +1,19 @@
 <script>
+    import "antd/dist/antd.css"
+    import { Button } from 'antd'
+
+    function handleClick({state, setState, count}){
+        setState({
+            ...state,
+            count: state.count + count
+        });
+    }
+
     export default {
-        initState: function () {
-            return new Promise((resolve) => {
-                resolve({
-                    msg: 'hello world'
-                })
-            })
-        }
+        defaultState: { count: 0 },
     }
 </script>
 
-<p onClick={() => setStatexxx({ msg: 'lalala' })}>{state.msg}</p>
+<Tpl:el count={state.count}></Tpl:el>
+<Button onClick={() => handleClick({state, setState, count: 1})}>count + 1</Button>
+<Button onClick={() => handleClick({state, setState, count: -1})}>count - 1</Button>

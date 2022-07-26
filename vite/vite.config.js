@@ -12,7 +12,7 @@ function bioxidePlugin() {
       transform(src, id) {
         if (/\.tpl$/.test(id)) {
           const res = babel.transformSync(
-            complier(src, { resolve: (name) => { return `./${name.slice(3)}.tpl` }}),
+            complier(src, { resolve: (name) => { return `./${name.slice(4)}.tpl` }}),
             { presets: ["@babel/preset-react"], sourceMaps: true }
           )
           return res
@@ -54,7 +54,7 @@ export default defineConfig({
         },
     },
     lib: {
-        entry: './src/main.tpl',
+        entry: './src/app.tpl',
         name: 'MyLib',
         // the proper extensions will be added
         fileName: (format) => `index.${format}.js`,

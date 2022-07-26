@@ -1,1 +1,11 @@
-<p onClick={() => setState({ msg: 'hello' })}></p>
+<script>
+    function xxx(state) {
+        console.log(state.xxx)
+    }
+
+    export default  {
+        
+    }
+</script>
+
+<p>{() => xxx(state)}</p>
