@@ -54,7 +54,7 @@ export default class Component {
         const code = new Code
 
         // class build
-        if (this.ast.instance) {
+        if (this.jsOptions) {
             const { defaultState, initState, reducer } = this.jsOptions
             code.addLine(`import React from 'react'`)
             code.addBlock(`${generate(this.ast.instance.content)}`)
@@ -85,8 +85,7 @@ export default class Component {
             }
             code.addLine(`render() {`)
             code.indent++
-            code.addLine(`const state = this.state`)
-            code.addLine(`const props = this.props`)
+            code.addLine(`const { state, props } = this`)
             code.addLine(`const setState = this.setState.bind(this)`)
             code.addBlock(`${this.fragment.codes[1].toString(1)}`)
             code.indent--
@@ -95,6 +94,9 @@ export default class Component {
             code.addLine(`}`)
         } else {
             const stateGraph = this.fragment.graph.build('state')
+            if (this.ast.instance && this.ast.instance.content) {
+                code.addBlock(`${generate(this.ast.instance.content)}`)
+            }
             code.addBlock(this.fragment.codes[0].toString())
             code.addLine('export default (props) => {')
             code.indent++
