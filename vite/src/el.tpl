@@ -1,4 +1,6 @@
 <script>
+    import "./el.css"
+
     export default {
         defaultState: { count: 0 },
         register: {
@@ -11,4 +13,4 @@
     }
 </script>
 
-<p>{props.msg}: {state.count}</p>
+<p class="test">{props.msg}: {state.count}</p>

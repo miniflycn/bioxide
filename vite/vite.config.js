@@ -9,7 +9,7 @@ const _dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [bioxidePlugin(), react()],
+  plugins: [bioxidePlugin(true), react()],
   server: {
     proxy: {
         '/rest': {

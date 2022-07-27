@@ -65,10 +65,17 @@ export default class Component {
         this.fragment.generate()
         const code = new Code
         const hasEventBus = this.fragment.hasEventBus
+        const { dev } = this.options
+
+        console.log(this.ast.css)
 
         code.addLine(`import React from 'react'`)
         if (hasEventBus) {
-            code.addLine(`import eventBus from 'bioxide/lib/event-bus.js'`)
+            if (dev) {
+                code.addLine(`import eventBus from '../../lib/event-bus.js'`)
+            } else {
+                code.addLine(`import eventBus from 'bioxide/lib/event-bus.js'`)
+            }
         }
         // class build
         if (this.jsOptions) {
