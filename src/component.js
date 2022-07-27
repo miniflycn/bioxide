@@ -68,7 +68,7 @@ export default class Component {
 
         code.addLine(`import React from 'react'`)
         if (hasEventBus) {
-            code.addLine(`import eventBus from '../../lib/event-bus.js'`)
+            code.addLine(`import eventBus from 'bioxide/lib/event-bus.js'`)
         }
         // class build
         if (this.jsOptions) {
