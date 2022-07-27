@@ -1,8 +1,8 @@
 <script>
     export default {
-        defaultState: { count: 0 }
+        defaultState: { count: 0 },
         register: {
-            change: (payload, { state, setState }) => {
+            change: (payload, { setState, state }) => {
                 if (payload.count) {
                     setState({ count: state.count + payload.count })
                 }

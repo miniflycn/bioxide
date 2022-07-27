@@ -1,19 +1,4 @@
-import Code from './nodes/code.js'
-
-function buildObj(obj) {
-    const code = new Code
-    code.addCode('{')
-    code.indent++
-    Object.keys(obj).forEach(key => {
-        const value = typeof obj[key] === 'object' ?
-            buildObj(obj[key]) : 'undefined'
-        code.addBlock(`${key}: ${value},`)
-    })
-    code.indent--
-    code.addLine('}')
-
-    return code.toString()
-}
+import objString from './utils/obj-string.js'
 
 export default class Graph {
     constructor() {
@@ -52,6 +37,6 @@ export default class Graph {
 
     build(name) {
         const obj = this.create(name)
-        return buildObj(obj) 
+        return objString(obj) 
     }
 }

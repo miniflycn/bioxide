@@ -50,11 +50,12 @@ export default class Fragment {
         this.stack = []
         this.current = this.codes[1]
         this.count = count()
-        this.values = ['props']
+        this.values = ['props', '$trigger']
         this.depCom = []
         this.graph = new Graph
         this.options = component.options
         this.js = component.ast.instance
+        this.hasEventBus = false
 
         if (!component.ast.instance) return
         this.values.push('state', 'setState')

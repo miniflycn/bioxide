@@ -39,6 +39,16 @@ export default class Component {
                         case 'reducer':
                             jsOptions[node.key.name] = node.value
                             break
+                        case 'register':
+                            jsOptions.register = {}
+                            if (node.value && node.value.type === 'ObjectExpression') {
+                                node.value.properties.forEach(node => {
+                                    if (node.type === 'Property') {
+                                        jsOptions.register[node.key.name] = node.value
+                                    }
+                                }) 
+                            }
+                            break
                     }                    
                     this.skip()
                 }
@@ -54,11 +64,15 @@ export default class Component {
     generate() {
         this.fragment.generate()
         const code = new Code
+        const hasEventBus = this.fragment.hasEventBus
 
         code.addLine(`import React from 'react'`)
+        if (hasEventBus) {
+            code.addLine(`import eventBus from '../../lib/event-bus.js'`)
+        }
         // class build
         if (this.jsOptions) {
-            const { defaultState, initState, reducer } = this.jsOptions
+            const { defaultState, initState, reducer, register } = this.jsOptions
             code.addBlock(`${generate(this.ast.instance.content)}`)
             code.addBlock(this.fragment.codes[0].map(code => code.toString()).join('\n'))
             if (reducer) {
@@ -76,19 +90,35 @@ export default class Component {
                 code.addBlock(`this.state = ${this.fragment.graph.build('state')}`)
             }
             code.addLine(`this.props = props`)
+            code.addLine(`this.__ = props.__${hasEventBus ? ' || eventBus.create()' : ''}`)
             code.indent--
             code.addLine(`}`)
+            code.addLine(`componentDidMount() {`)
             if (initState) {
-                code.addLine(`componentDidMount() {`)
                 code.indent++
                 code.addBlock(`(${generate(initState)})(this.props).then(v => {this.setState(v)})`)
                 code.indent--
-                code.addLine(`}`)
+            }
+            if (register) {
+                code.indent++
+                Object.keys(register).forEach(key => {
+                    code.addBlock(`this.__.register('${key}', (payload) => { const { state, setState } = this; (${generate(register[key])})(payload, { state, setState: setState.bind(this) })})`)                    
+                })
+                code.indent--
+            }
+            code.addLine(`}`)
+            if (register) {
+                code.addLine('componentWillUnmount() {')
+                code.indent++
+                code.addLine(`this.__.destroy()`)
+                code.indent--
+                code.addLine('}')
             }
             code.addLine(`render() {`)
             code.indent++
-            code.addLine(`const { state, props } = this`)
+            code.addLine(`const { state, props, __ } = this`)
             code.addLine(`const setState = this.setState.bind(this)`)
+            code.addLine(`const $trigger = __ ? __.trigger : function () { console.warn('you should not use $trigger in thie component.') }`)
             code.addBlock(`${this.fragment.codes[1].toString(1)}`)
             code.indent--
             code.addLine(`}`)
@@ -105,6 +135,8 @@ export default class Component {
             if (stateGraph !== '{\n}') {
                 code.addBlock(`console.warn(\`component state is undefined, but template use it\`, 'state graph === ', ${stateGraph})`)
             }
+            code.addLine(`const __ = props.__${hasEventBus ? ' || eventBus.create()' : ''}`)
+            code.addLine(`const $trigger = __ ? __.trigger : function () { console.warn('you should not use $trigger in thie component.') }`)
             code.addBlock(`${this.fragment.codes[1].toString(1)}`)
             code.indent--
             code.addLine('}')
