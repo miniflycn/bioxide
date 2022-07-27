@@ -3,23 +3,9 @@ import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url';
 // import pkg from './package.json' assert {type: "json"}
 import react from '@vitejs/plugin-react'
+import bioxidePlugin from '../lib/vite-plugin.js'
 const _dirname = dirname(fileURLToPath(import.meta.url));
-import complier from '../src/index.js'
-import babel from '@babel/core'
-function bioxidePlugin() {
-    return {
-      name: 'transform-bioxide',
-      transform(src, id) {
-        if (/\.tpl$/.test(id)) {
-          const res = babel.transformSync(
-            complier(src, { resolve: (name) => { return `./${name.slice(4)}.tpl` }}),
-            { presets: ["@babel/preset-react"], sourceMaps: true }
-          )
-          return { code: res.code }
-        }
-      }
-    }
-}
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
