@@ -6,6 +6,7 @@ import { Button } from 'antd'
 import complie from '../src/index.js'
 import { transformSync } from "@babel/core";
 import { readFileSync } from 'fs'
+import eventBus from '../lib/event-bus.js'
 
 let El = build('el')
 
@@ -31,6 +32,7 @@ function build(name, debug) {
         if (name === 'react-dom/test-utils') return { act }
         if (name === 'antd') return { Button }
         if (name === './el.tpl') return El
+        if (name === 'bioxide/lib/event-bus.js') return eventBus
         throw new Error(`Cannot load ${name}`)
     }
     ;(new Function('module', 'exports', 'require', code))(mod, mod.exports, req)

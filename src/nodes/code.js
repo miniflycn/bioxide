@@ -34,6 +34,7 @@ export default class Code {
     
     trimEnd(reg) {
         const last = this.code.pop()
+        // TODO: trimEnd 不支持正则表达式
         this.code.push(last.trimEnd(reg))
     }
     

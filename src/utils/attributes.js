@@ -17,7 +17,6 @@ export default function attributes(fragment, attributes) {
         if (attributeMap[attribute.name]) {
             fragment.addCode(`${attributeMap[attribute.name]}=`)
         } else if (attribute.name.indexOf('bioxide:') > -1) {
-            console.log(attribute)
             eventBusConfig = eventBusConfig || {}
             const register = attribute.name.indexOf('bioxide:r') > -1 && attribute.value[0].data
             if (register) { 

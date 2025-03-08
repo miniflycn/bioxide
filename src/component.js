@@ -136,7 +136,7 @@ export default class Component {
             if (this.ast.instance && this.ast.instance.content) {
                 code.addBlock(`${generate(this.ast.instance.content)}`)
             }
-            code.addBlock(this.fragment.codes[0].toString())
+            code.addBlock(this.fragment.codes[0].map(code => code.toString()).join('\n'))
             code.addLine('export default (props) => {')
             code.indent++
             if (stateGraph !== '{\n}') {
@@ -148,7 +148,7 @@ export default class Component {
             code.indent--
             code.addLine('}')
         }        
-        
+
         return code.toString()
     }
 }

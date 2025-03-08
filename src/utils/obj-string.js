@@ -1,6 +1,6 @@
 import Code from '../nodes/code.js'
 
-export default function (obj) {
+export default function buildObj(obj) {
     const code = new Code
     code.addCode('{')
     code.indent++
